@@ -1,10 +1,16 @@
 from app_registro import app
 from flask import render_template
+import csv
 
 @app.route("/")
 def index():
+    fichero =open ("data/movimientos.txt","r")
+    csvReader = csv.reader(fichero,delimiter=",",quotechar='"')
     #prueba de diccionario a vista de html
-    datos = [
+    datos = [ ]
+    for item in csvReader:
+        datos.append(item)
+        '''
         {
             'fecha':'18/12/22',
             'concepto': 'Regalo de Reyes',
@@ -21,11 +27,12 @@ def index():
             'cantidad':-355.50
         }
     ]
+    '''
     return render_template("index.html", pageTitle="Listas", lista=datos)
 
-@app.route("/new")
+@app.route("/new", method=["get","post"])
 def create():
-    return render_template("new.html", pageTitle="Alta")
+    return render_template("new.html", pageTitle="Alta", typeAction= "Alta", typeButton="Guardar")
 
 @app.route("/delete")
 def remove():
@@ -33,4 +40,4 @@ def remove():
 
 @app.route("/update")
 def edit():
-    return render_template("update.html", pageTitle="Editar")
+    return render_template("update.html", pageTitle="Editar", typeAction="Actualización",typeButton="Editar")

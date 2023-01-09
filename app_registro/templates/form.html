@@ -1,17 +1,19 @@
-{% block formBase%}
+{% extends "base.html" %}
 
-
-{% endblock%}
-<form>
+{% block pageBase%}
+<h1> Esto sería {{typaAction}} de Ingresos y Gastos</h1>
+<p> Un simulacro de contabilidad</p>
+<form action = "/new" method="post">
     <label for="fecha">Fecha:</label >
-    <input type="date" name="fecha" placeholder="Ingrese la fecha">
+    <input type="date" name="fecha" required>
     <br>
     <label for="concepto">Concepto:</label>
-    <input type="text" name="concepto"  placeholder="Ingrese el concepto">
+    <input type="text" name="concepto"  placeholder="Ingrese concepto" required>
     <br>
     <label for="cantidad">Cantidad:</label>
-    <input type="number" name="cantidad" placeholder="Ingrese la cantidad">
+    <input type="number" name="cantidad" placeholder="Ingrese cantidad" required>
     <br>
-    <button onclick="alert('ya lo gardaste, gracias')">Editar</button>
+    <button type="submit">{{typeButton}}</button>
 
 </form>
+{%endblock%}

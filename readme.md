@@ -20,6 +20,12 @@ La librería utilizada flask https://flask.palletsprojects.com/en/2.2.x
     ```
     set FLASK_APP=hello.py
     ```
+    ### Otra alternativa seria crear el archivo oculto dentro de .env y dentro agregar las siguientes líneas
+    ```
+    FLASK_APP = main.py
+    FLASK_DEBUG= true
+    ```
+    
 ## Comando para ejecutar el servidor:
 ```
 flask --app hello run
