@@ -19,28 +19,43 @@ def create():
     if request.method == "GET": #esto peuede ser GET o POST
         return render_template("new.html", pageTitle="Alta", typeAction= "Alta", typeButton="Guardar", pageForm="/new",dataForm={})
     else:
-        mifichero = open("data/movimientos.csv","a",newline='')
-        lectura =csv.writer(mifichero, delimiter=',',quotechar='"')
-
         error =validateForm(request.form)
         
         if error:
             return render_template("new.html", pageTitle="Alta", typeAction= "Alta", typeButton="Guardar",msjerror=error, dataForm=request.form, pageForm="/new")
         else:
-            lectura.writerow([request.form['date'],request.form['concept'],request.form['quantity']])
+            mifichero = open("data/movimientos.csv","a",newline='')
+            lectura =csv.writer(mifichero, delimiter=',',quotechar='"')
+            #crear id
+            fichero =open ("data/last_id.csv","r")
+                        
+            registro = fichero.read()
+            if registro =="":
+                new_id = 1
+            else:
+                new_id= int(registro)+1
+
+            fichero.close()
+
+            ficheroG = open("data/last_id.cvs","w")
+            ficheroG.write(str(new_id))
+            ficheroG.close()
+            
+            lectura.writerow([new_id,request.form['date'],request.form['concept'],request.form['quantity']])
 
         mifichero.close()
     return redirect('/')
     
 
-@app.route("/delete")
-def remove():
-    return render_template("delete.html", pageTitle="Borrar")
+@app.route("/delete/<int:id>")
+def remove(id):
+    #return render_template("delete.html", pageTitle="Borrar")
+    return f"Se va a eliminar el id {id}"
 
-@app.route("/update")
-def edit():
-    return render_template("update.html", pageTitle="Editar", typeAction="Actualización",typeButton="Editar", pageForm="/update")
-
+@app.route("/update/<int:id>")
+def edit(id):
+    #return render_template("update.html", pageTitle="Editar", typeAction="Actualización",typeButton="Editar", pageForm="/update")
+    return f"Se va a modificar el id {id}"
 
 def validateForm(requestForm):
     hoy = date.today().isoformat()
