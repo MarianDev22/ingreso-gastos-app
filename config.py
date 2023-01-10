@@ -1,0 +1,3 @@
+#MOVIMIENTOS_FILE= "data/movimientos.csv"
+#MOVIMIENTOS_NEW_FILE=
+#LAST_ID_FILE=
