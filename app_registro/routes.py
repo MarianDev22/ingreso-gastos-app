@@ -47,10 +47,23 @@ def create():
     return redirect('/')
     
 
-@app.route("/delete/<int:id>")
+@app.route("/delete/<int:id>", methods=["GET","POST"])
 def remove(id):
-    #return render_template("delete.html", pageTitle="Borrar")
-    return f"Se va a eliminar el id {id}"
+    if request.method == "GET":
+        mifichero = open("data/movimientos.csv","r")
+        lectura =csv.reader(mifichero, delimiter=',',quotechar='"')
+        registro_buscado=[]
+        for registro in lectura:
+            if registro[0]== str(id):
+                registro_buscado= registro
+        mifichero.close()
+        
+        if len(registro_buscado)>0:
+            return render_template("delete.html", pageTitle="Borrar", registros=registro_buscado,typeButton="Borrar")
+        else:
+            return ("/")
+    else:
+        return f"aqui tendriamos que borrar registro con {id}"
 
 @app.route("/update/<int:id>")
 def edit(id):
