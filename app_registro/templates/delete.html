@@ -4,15 +4,15 @@
 <table>
        <tr>
             <td>Fecha</td>
-            <td>{{registros[1]}}</td>
+            <td>{{registros['date']}}</td>
        </tr>
        <tr>
             <td>Concepto</td>
-            <td>{{registros[2]}}</td>
+            <td>{{registros['concept']}}</td>
         </tr>
         <tr>
             <td>Cantidad</td>
-            <td>{{registros[3]}}</td>
+            <td>{{registros['quantity']}}</td>
         </tr>
 </table>
 <form action="/delete/{{registros[0]}}" method="post">

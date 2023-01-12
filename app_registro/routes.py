@@ -4,17 +4,10 @@ import csv
 from datetime import date, datetime
 from config import *
 import os # permite hacer acciones propias del sist op: borrar carpetas, crearlas, etc.
-
+from models import *
 @app.route("/")
 def index():
-    fichero =open (MOVIMIENTOS_FILE,"r")
-    csvReader = csv.reader(fichero,delimiter=",",quotechar='"')
-    #prueba de diccionario a vista de html
-    datos = [ ]
-    for item in csvReader:
-        datos.append(item)
-    
-    fichero.close()
+    datos = select_all()
         
     return render_template("index.html", pageTitle="Listas", lista=datos)
 
@@ -28,71 +21,42 @@ def create():
         if error:
             return render_template("new.html", pageTitle="Alta", typeAction= "Alta", typeButton="Guardar",msjerror=error, dataForm=request.form, pageForm="/new")
         else:
-            mifichero = open(MOVIMIENTOS_FILE,"a",newline='')
-            lectura =csv.writer(mifichero, delimiter=',',quotechar='"')
-            #crear id
-            fichero =open (LAST_ID_FILE,"r")
-                        
-            registro = fichero.read()
-            if registro =="":
-                new_id = 1
-            else:
-                new_id= int(registro)+1
+            insert([request.form['date'],request.form['concept'],request.form['quantity']])
 
-            fichero.close()
-
-            ficheroG = open(LAST_ID_FILE,"w")
-            ficheroG.write(str(new_id))
-            ficheroG.close()
-            
-            lectura.writerow([new_id,request.form['date'],request.form['concept'],request.form['quantity']])
-
-        mifichero.close()
+        
     return redirect('/')
     
 
 @app.route("/delete/<int:id>", methods=["GET","POST"])
 def remove(id):
     if request.method == "GET":
-        mifichero = open(MOVIMIENTOS_FILE,"r")
-        lectura =csv.reader(mifichero, delimiter=',',quotechar='"')
-        registro_buscado=[]
-        for registro in lectura:
-            if registro[0]== str(id):
-                registro_buscado= registro
-        mifichero.close()
+
+        registro_buscado = select_by(id)
 
         if len(registro_buscado)>0:
             return render_template("delete.html", pageTitle="Borrar", registros=registro_buscado,typeButton="Borrar")
         else:
-            return ("/")
+            return redirect("/")
     else:
-        fichero_old = open(MOVIMIENTOS_FILE,"r")
-        fichero = open(MOVIMIENTOS_NEW_FILE,"w", newline="")
-        csvReader= csv.reader(fichero_old, delimiter=',',quotechar='"')
-        csvWriter= csv.writer(fichero, delimiter=',',quotechar='"')
-        
-        for registro in csvReader:
-            if registro[0]!= str(id):
-                csvWriter.writerow(registro)
-        fichero.close()
-        fichero_old.close()
-        os.remove(MOVIMIENTOS_FILE)
-        os.rename(MOVIMIENTOS_NEW_FILE, MOVIMIENTOS_FILE)
+        delete_by(id)
 
         return redirect("/")
 
-@app.route("/update/<int:id>")
+@app.route("/update/<int:id>", methods=["GET","POST"])
 def edit(id):
+    
     if request.method == "GET":
-        mifichero = open(MOVIMIENTOS_FILE,"r")
-        lectura =csv.reader(mifichero, delimiter=',',quotechar='"')
-        registro_buscado=[]
-        for registro in lectura:
-            if registro[0]== str(id):
-                registro_buscado= registro
-        mifichero.close()
-    return render_template("update.html", pageTitle="Editar", typeAction="Actualización",typeButton="Editar", pageForm="/update", registros=registro_buscado)
+        registro= select_by(id)
+        return render_template("update.html", pageTitle="Modificación", typeAction="Modificación",typeButton="Editar", pageForm="/update", registros=registro, dataForm=registro)
+    else:
+        error =validateForm(request.form)
+        
+        if error:
+            return render_template("update.html", pageTitle="Modificación", typeAction= "Modificación", typeButton="Guardar",msjerror=error, dataForm=request.form, pageForm="/new")
+        else:
+            update_by([request.form['date'],request.form['concept'],request.form['quantity']])
+
+            
     #return f"Se va a modificar el id {id}"
 
 def validateForm(requestForm):
