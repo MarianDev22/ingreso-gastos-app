@@ -5,6 +5,7 @@ from datetime import date, datetime
 from config import *
 import os # permite hacer acciones propias del sist op: borrar carpetas, crearlas, etc.
 from models import *
+
 @app.route("/")
 def index():
     datos = select_all()
@@ -44,20 +45,20 @@ def remove(id):
 
 @app.route("/update/<int:id>", methods=["GET","POST"])
 def edit(id):
-    
     if request.method == "GET":
+
         registro= select_by(id)
-        return render_template("update.html", pageTitle="Modificación", typeAction="Modificación",typeButton="Editar", pageForm="/update", registros=registro, dataForm=registro)
+        return render_template("update.html", pageTitle="Modificación", typeAction="Modificación",typeButton="Editar", dataForm=registro, pageForm="/update/"+str(id))
     else:
         error =validateForm(request.form)
         
         if error:
-            return render_template("update.html", pageTitle="Modificación", typeAction= "Modificación", typeButton="Guardar",msjerror=error, dataForm=request.form, pageForm="/new")
+            return render_template("update.html", pageTitle="Modificación", typeAction= "Modificación", typeButton="Editar",msjerror=error, dataForm=request.form)
         else:
-            update_by([request.form['date'],request.form['concept'],request.form['quantity']])
+            update_by(id,[request.form['date'],request.form['concept'],request.form['quantity']])
 
             
-    #return f"Se va a modificar el id {id}"
+    return redirect("/")
 
 def validateForm(requestForm):
     hoy = date.today().isoformat()

@@ -1,24 +1,2 @@
-{% extends "base.html" %}
-
-{% block pageBase%}
-<table>
-       <tr>
-            <td>Fecha</td>
-            <td>{{registros[1]}}</td>
-       </tr>
-       <tr>
-            <td>Concepto</td>
-            <td>{{registros[2]}}</td>
-        </tr>
-        <tr>
-            <td>Cantidad</td>
-            <td>{{registros[3]}}</td>
-        </tr>
-</table>
-<form action="/update/{{registros[0]}}" method="post">
-<button type="submit">Editar</button>
-</form>
-
-<a href="/">Volver</a>
-{% endblock%}
+{% extends "form.html" %}
 

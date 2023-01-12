@@ -1,7 +1,4 @@
-from app_registro import app
-from flask import render_template, request, redirect
 import csv
-from datetime import date, datetime
 from config import *
 import os
 
@@ -70,7 +67,7 @@ def insert(registro_form):
 
     mifichero.close()
 
-def update_by(id):
+def update_by(id, registro_modificado):
     fichero_old = open(MOVIMIENTOS_FILE,"r")
     fichero = open(MOVIMIENTOS_NEW_FILE,"w", newline="")
     csvReader= csv.reader(fichero_old, delimiter=',',quotechar='"')
@@ -79,5 +76,10 @@ def update_by(id):
     for registro in csvReader:
         if registro[0]!= str(id):
             csvWriter.writerow(registro)
+        else:
+           csvWriter.writerow([str(id)]+ registro_modificado)
     fichero.close()
     fichero_old.close()
+
+    os.remove(MOVIMIENTOS_FILE)
+    os.rename(MOVIMIENTOS_NEW_FILE, MOVIMIENTOS_FILE)
